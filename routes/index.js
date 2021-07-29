@@ -7,9 +7,9 @@ router.get('/', function(req, res, next) {
   // res.render('index', { title: 'Express' });
 });
 
-
 // List of all routers
-router.use('/users', require('./users'))
-
+router.use('/api/v1/users', require('./users'))
 
 module.exports = router
+
+

@@ -3,15 +3,19 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const dotenv=require('dotenv');
+const connectDB = require('./config/db');
+
+var app = express();
 
 // All Routers are defined here
 var indexRouter = require('./routes/index');
-var app = express();
 
-// mongoose.connect('mongodb://localhost/DigiStore')
-//   .then(() => console.log('Connected to DigiStore MongoDB...'))
-//   .catch(err => console.error('Could not connect to DigiStore MongoDB...'));
+// load env vars
+dotenv.config({ path: './config/config.env' });
 
+// Connect to database
+connectDB();
 
 // Middlewares
 app.use(logger('dev'));

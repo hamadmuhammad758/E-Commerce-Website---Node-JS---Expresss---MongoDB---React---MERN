@@ -3,11 +3,20 @@
 
 var express = require('express');
 var router = express.Router();
-const {Genre, validate} = require('../models/user');
+const {createUser,getUsersById,getUsers,deleteUsers,updateUsers}= require('../Controllers/users');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router
+      .route('/')
+      .get(getUsers)
+      .post(createUser);
+      
+
+router
+      .route('/:id')
+      .get(getUsersById)
+      .delete(deleteUsers)
+      .put(updateUsers);
 
 module.exports = router;
+
+
