@@ -3,14 +3,14 @@ const {User, validateUser, generateHashedPassword} = require('../models/user');
 
 exports.getUsers=async (req,res,next) =>{
     const user=await User.find({});
-    if (user) {
+    if (user.length>0) {
         res.status(200).send(user);
     } else {
-        res.status(204).send("No Record Exist"); //No Content
+        res.status(404).send("No Record Exist"); //No Content
     }    
 };
-
 exports.getUsersById=async (req,res,next) =>{
+    //supply JSON filter 
     console.log('get users by id');
     // res.send("Getting List of User by ID");
     const user=await User.find({_id:req.params.id});
@@ -56,6 +56,13 @@ exports.createUser=async(req,res,next)=>{
     }         
 };
 exports.deleteUsers=async(req,res,next)=>{
+    const user=await User.deleteOne({_id:req.params.id});
+    if (user.deletedCount>0) {
+        res.status(200).send(`${user.deletedCount} record deleted`);
+    } else {
+        res.status(404).send("No Record Exist"); //No Content
+    } 
 };
 exports.updateUsers=async(req,res,next)=>{
+    
 };
