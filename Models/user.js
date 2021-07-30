@@ -25,16 +25,22 @@ const userSchema = new mongoose.Schema({
     maxlength: 255,
     unique: true
   },
-  hashedAndSaltedpassword: {
+  hashedAndSaltedPassword: {
     type: String,
     required: true,
     minlength: 5,
     maxlength: 1024
   },
-  userRole: {
-    type:String,
-    enum:['SiteAdmin','Seller','Buyer'],
-    required: true
+  // userRole: {
+  //   type:String,
+  //   enum:['SiteAdmin','Seller','Buyer'],
+  //   required: true
+  // },
+  userRole:{
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 1024
   },
   profileImage:{
     type: String,
@@ -51,41 +57,28 @@ userSchema.methods.generateAuthToken = function() {
 }
 const User = mongoose.model('User', userSchema);
 
-exports.createUser=async function(user){
-  const isValidUser=validateUser(user);
-  if (isValidUser) {
-    const user=new User({
-      fname:user.fname,
-      lname:user.lname,
-      email:user.email,
-      hashedAndSaltedpassword:generateHashedPassword(user.password),
-      userRole:user.userRole,
-      profileImage:user.profileImage
-    });
-    const result=await user.save();
-  } else {
-      return isValidUser;
-  }
-  
-}
 
 function validateUser(user) {
-  const schema = {
+  const schema =Joi.object( {
     fname: Joi.string().min(5).max(50).required(),
     lname: Joi.string().min(5).max(50).required(),
     profileImage: Joi.string().min(5).max(1024).required(),
     email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
-    userRole:Joi.string.valid('SiteAdmin','Seller','Buyer').required()
-  };
-  return Joi.validate(user, schema);
+    userRole: Joi.string().min(5).max(255).required(),
+    //userRole:Joi.string.valid('SiteAdmin','Seller','Buyer').required()
+  });
+  const { error } =schema.validate(user);
+  console.log(`Validation status :  ${error}`)
+  return error;
 }
 async function generateHashedPassword(password){
   const salt = await bcrypt.genSalt(10); // to save from rainbow table attack
-  password =await bcrypt.hash(InputJson.password,salt);
+  password =await bcrypt.hash(password,salt);
   return password;
 }
 
 exports.User = User; 
-exports.validate = validateUser;
+exports.validateUser = validateUser;
+exports.generateHashedPassword=generateHashedPassword;
 
